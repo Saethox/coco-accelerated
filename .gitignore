@@ -9,3 +9,6 @@
 /plotting/.venv
 /plotting/plots
 __pycache__
+
+.idea
+.run
