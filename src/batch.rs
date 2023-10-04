@@ -7,7 +7,7 @@ pub struct InputBatch<'a> {
 impl<'a> InputBatch<'a> {
     pub fn new(data: &'a [f64], dimension: usize) -> Self {
         assert!(dimension > 0);
-        assert!(data.len() % dimension == 0);
+        assert_eq!(data.len() % dimension, 0);
 
         InputBatch { data, dimension }
     }

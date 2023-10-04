@@ -1,4 +1,5 @@
 #![warn(missing_docs)]
+#![allow(clippy::too_many_arguments)]
 
 //! Futhark implementation of the COCO-BBOB suite.
 

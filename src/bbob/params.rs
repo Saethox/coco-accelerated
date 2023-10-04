@@ -213,7 +213,6 @@ impl Params {
 
                 // w = peak_values
                 let mut w = (0..peaks)
-                    .into_iter()
                     .map(|i| i as f64)
                     .map(|i| 1.1 + 8.0 * (i - 1.0) / ((peaks - 2) as f64))
                     .collect::<Vec<_>>();

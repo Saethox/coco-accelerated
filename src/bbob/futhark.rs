@@ -37,39 +37,39 @@ pub enum FutharkParams<'c, B: Backend> {
 unsafe impl<'c, B: Backend> Send for FutharkParams<'c, B> {}
 
 impl<'c, B: Backend> FutharkParams<'c, B> {
-    pub fn new<'a>(ctx: &'c coco_futhark::Context<B>, params: &Params) -> Self {
+    pub fn new(ctx: &'c coco_futhark::Context<B>, params: &Params) -> Self {
         use coco_futhark::{Array_F64_1D, Array_F64_2D};
 
-        match params {
-            &Params::Basic { fopt, ref xopt } => {
-                let xopt = Array_F64_1D::new(ctx, &xopt, xopt.len());
+        match *params {
+            Params::Basic { fopt, ref xopt } => {
+                let xopt = Array_F64_1D::new(ctx, xopt, xopt.len());
                 FutharkParams::Basic { fopt, xopt }
             }
-            &Params::Rotated {
+            Params::Rotated {
                 fopt,
                 ref xopt,
                 ref R,
             } => {
-                let xopt = Array_F64_1D::new(ctx, &xopt, xopt.len());
+                let xopt = Array_F64_1D::new(ctx, xopt, xopt.len());
                 let R = Array_F64_2D::new(ctx, &R.data, R.dimension, R.dimension);
                 FutharkParams::Rotated { fopt, xopt, R }
             }
-            &Params::FixedRotated { fopt, ref R } => {
+            Params::FixedRotated { fopt, ref R } => {
                 let R = Array_F64_2D::new(ctx, &R.data, R.dimension, R.dimension);
                 FutharkParams::FixedRotated { fopt, R }
             }
-            &Params::DoubleRotated {
+            Params::DoubleRotated {
                 fopt,
                 ref xopt,
                 ref R,
                 ref Q,
             } => {
-                let xopt = Array_F64_1D::new(ctx, &xopt, xopt.len());
+                let xopt = Array_F64_1D::new(ctx, xopt, xopt.len());
                 let R = Array_F64_2D::new(ctx, &R.data, R.dimension, R.dimension);
                 let Q = Array_F64_2D::new(ctx, &Q.data, Q.dimension, Q.dimension);
                 FutharkParams::DoubleRotated { fopt, xopt, R, Q }
             }
-            &Params::Gallagher {
+            Params::Gallagher {
                 fopt,
                 peaks,
                 ref y,
@@ -86,9 +86,9 @@ impl<'c, B: Backend> FutharkParams<'c, B> {
                     y.len(),
                     "y must have length of dim * peaks"
                 );
-                let y = Array_F64_2D::new(ctx, &y, R.dimension, peaks);
-                let w = Array_F64_1D::new(ctx, &w, w.len());
-                let c = Array_F64_2D::new(ctx, &c, peaks, R.dimension);
+                let y = Array_F64_2D::new(ctx, y, R.dimension, peaks);
+                let w = Array_F64_1D::new(ctx, w, w.len());
+                let c = Array_F64_2D::new(ctx, c, peaks, R.dimension);
                 let R = Array_F64_2D::new(ctx, &R.data, R.dimension, R.dimension);
                 FutharkParams::Gallagher { fopt, y, w, c, R }
             }
