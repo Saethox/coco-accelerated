@@ -73,24 +73,29 @@ pub struct Evaluator<'c, B: Backend> {
 }
 
 impl<'c, B: Backend> Evaluator<'c, B> {
+    pub fn context(&self) -> &'c Context<B> {
+        self.context
+    }
+
     pub fn evaluate(&self, x: InputBatch) -> Vec<f64> {
         evaluate_function(self.context, self.function, &self.futhark_params, x).unwrap()
     }
 
-    pub fn evalutate_iter<'a>(
-        &self,
-        x: impl ExactSizeIterator<Item = impl AsRef<&'a [f64]>>,
-    ) -> Vec<f64> {
-        let inputs = x.len();
+    pub fn evaluate_iter<'a, I>(&self, x: I) -> Vec<f64>
+    where
+        I: IntoIterator,
+        I::Item: IntoIterator<Item = &'a f64>,
+        I::IntoIter: ExactSizeIterator,
+    {
+        let iter = x.into_iter();
+
+        let inputs = iter.len();
 
         if inputs == 0 {
             return Vec::new();
         }
 
-        let data = x
-            .map(|x| x.as_ref().iter().copied())
-            .flatten()
-            .collect::<Vec<f64>>();
+        let data: Vec<_> = iter.flatten().copied().collect();
 
         let dimension = data.len() / inputs;
 
